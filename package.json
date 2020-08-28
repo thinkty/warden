@@ -1,8 +1,8 @@
 {
-  "name": "dialogflow-editor-server",
+  "name": "warden",
   "version": "1.0.0",
-  "description": "A template server for managing intents on Dialogflow using the Dialogflow Editor and also serving as a chatbot for various chat application platforms",
-  "main": "index.js",
+  "description": "A personal assitant for Discord",
+  "main": "app.js",
   "scripts": {
     "start": "./node_modules/.bin/nodemon src/app.js",
     "test": "NODE_ENV=test ./node_modules/.bin/jest",
@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkty/dialogflow-editor-server.git"
+    "url": "git+https://github.com/thinkty/warden.git"
   },
   "author": "Tae Yoon Kim",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thinkty/dialogflow-editor-server/issues"
+    "url": "https://github.com/thinkty/warden/issues"
   },
-  "homepage": "https://github.com/thinkty/dialogflow-editor-server",
+  "homepage": "https://github.com/thinkty/warden",
   "dependencies": {
     "@google-cloud/dialogflow": "^3.2.0",
     "axios": "^0.20.0",
