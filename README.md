@@ -9,5 +9,8 @@ The main thing I like about Discord.js is that it uses sockets instead of API en
 ## System Layout
 You can find the explanation of the system layout in the [Source Chat](https://github.com/thinkty/source-chat) repository.
 
+## Installation
+I recommend you start with [Source Chat](https://github.com/thinkty/source-chat) instead of this repository as Warden is more personalized (with various action handlers and modifications from the template)
+
 ## License
 MIT
