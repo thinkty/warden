@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -34,6 +35,7 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir("./public")))
 	http.HandleFunc("/data", getData)
 
+	fmt.Println("Starting server...")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
 
