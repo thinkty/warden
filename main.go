@@ -1,9 +1,14 @@
 package main
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // BTRequest is the data structure used for sending queries from the server to
@@ -32,11 +37,36 @@ type BTResponse struct {
 }
 
 func main() {
+	initDB()
+
 	http.Handle("/", http.FileServer(http.Dir("./public")))
 	http.HandleFunc("/data", getData)
 
-	fmt.Println("Starting server...")
+	log.Println("Starting server...")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+}
+
+// Create the database file if it does not exist
+func initDB() {
+	log.Println("Initializing DB file...")
+
+	// Return if the file exists
+	if _, err := os.Stat("./sensor.db"); !errors.Is(err, os.ErrNotExist) {
+		log.Println("DB file exists, skipping creation...")
+		return
+	}
+	log.Println("DB file does not exist, proceeding initialization...")
+
+	db, err := sql.Open("sqlite3", "./sensor.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	query := `create table sensor (id integer not null primary key, name text);`
+	if _, err = db.Exec(query); err != nil {
+		log.Fatalf("%q: %s\n", err, query)
+	}
 }
 
 // Retrieve all data from the database
@@ -48,6 +78,6 @@ func getData(rw http.ResponseWriter, r *http.Request) {
 
 	// TODO: request sensor values from the database
 
-	rw.Header().Set("Content-Type", "application/json")
-
+	// rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, "OK!")
 }
