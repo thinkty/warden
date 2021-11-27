@@ -63,7 +63,15 @@ func initDB() {
 	}
 	defer db.Close()
 
-	query := `create table sensor (id integer not null primary key, name text);`
+	query := `CREATE TABLE sensor
+	(
+		id INTEGER PRIMARY KEY,
+		date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		beacon TEXT NOT NULL,
+		name TEXT NOT NULL,
+		record_type INTEGER NOT NULL,
+		record BLOB
+	)`
 	if _, err = db.Exec(query); err != nil {
 		log.Fatalf("%q: %s\n", err, query)
 	}
