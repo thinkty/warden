@@ -40,10 +40,11 @@ func main() {
 	initDB()
 
 	http.Handle("/", http.FileServer(http.Dir("./public")))
+	http.HandleFunc("/ok", getHealth)
 	http.HandleFunc("/data", getData)
 
 	log.Println("Starting server...")
-	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+	log.Panic(http.ListenAndServe("localhost:8080", nil))
 }
 
 // Create the database file if it does not exist
@@ -75,6 +76,13 @@ func initDB() {
 	if _, err = db.Exec(query); err != nil {
 		log.Fatalf("%q: %s\n", err, query)
 	}
+}
+
+// Simple health check
+func getHealth(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusOK)
+	log.Println("Health Check OK!")
+	return
 }
 
 // Retrieve all data from the database
