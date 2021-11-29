@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -37,18 +38,20 @@ type BTResponse struct {
 }
 
 // DBRow is the structure of the sensor table in the database.
+// Each field is exported so that it can be json encoded.
+// Record can be empty (null) so it uses the sql type NullString.
 type DBRow struct {
-	id int
-	date string
-	beacon string
-	name string
-	record_type int
-	record string
+	Id          int
+	Date        string
+	Beacon      string
+	Name        string
+	RecordType  int
+	Record      sql.NullString
 }
 
 // Parse DBItem into string format for logging purpose
 func (item DBRow) String() string {
-	return fmt.Sprintf("\tID:\t%d\n\tDate:\t%s\n\tBeacon:\t%s\n\tName:\t%s\n\tRecord-Type:\t%d\n\tRecord:%s\n", item.id, item.date, item.beacon, item.name, item.record_type, item.record)
+	return fmt.Sprintf("\n\tID:\t%d\n\tDate:\t%s\n\tBeacon:\t%s\n\tName:\t%s\n\tRecord-Type:\t%d\n\tRecord:%s\n", item.Id, item.Date, item.Beacon, item.Name, item.RecordType, item.Record.String)
 }
 
 func main() {
@@ -130,7 +133,7 @@ func getData(rw http.ResponseWriter, r *http.Request) {
 	data := make([]DBRow, 0)
 	for rows.Next() {
 		var row DBRow
-		if err := rows.Scan(&row.id, &row.date, &row.beacon, &row.name, &row.record_type, &row.record); err != nil {
+		if err := rows.Scan(&row.Id, &row.Date, &row.Beacon, &row.Name, &row.RecordType, &row.Record); err != nil {
 			http.Error(rw, "Row scan failed", http.StatusInternalServerError)
 			log.Print(err)
 			return
@@ -138,7 +141,10 @@ func getData(rw http.ResponseWriter, r *http.Request) {
 		data = append(data, row)
 	}
 
+	log.Println("Row successfully scanned, printing results...")
 	fmt.Println(data)
-	// rw.Header().Set("Content-Type", "application/json")
-	rw.WriteHeader(http.StatusOK) // TODO: send content
+
+	// Send content in json format
+	rw.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(rw).Encode(data)
 }
