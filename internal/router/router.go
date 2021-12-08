@@ -12,12 +12,12 @@ import (
 )
 
 const addr string = "localhost:8080"
-const static_path string = "./web"
+const staticPath string = "./web"
 
 // Initialize the router by specifying the handlers to each path and start the
 // actual server on the specified address
 func InitAndServe() {
-	http.Handle("/", http.FileServer(http.Dir(static_path)))
+	http.Handle("/", http.FileServer(http.Dir(staticPath)))
 	http.HandleFunc("/ok", getHealth)
 	http.HandleFunc("/data", getData)
 
@@ -40,10 +40,10 @@ func getData(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err, err_msg := database.ReadRecords()
+	data, err, errMsg := database.ReadRecords()
 	if err != nil {
-		http.Error(rw, err_msg, http.StatusInternalServerError)
-		log.Println(err_msg)
+		http.Error(rw, errMsg, http.StatusInternalServerError)
+		log.Println(errMsg)
 		log.Println(err)
 	}
 
