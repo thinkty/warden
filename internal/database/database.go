@@ -62,7 +62,7 @@ func Init() {
 
 // Retrieve all data from the database. If error has occurred, return the error
 // along with the descriptive error message
-func GetData() ([]DBRow, error, string) {
+func ReadRecords() ([]DBRow, error, string) {
 
 	// Connect to database
 	db, err := sql.Open("sqlite3", "./sensor.db")

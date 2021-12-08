@@ -40,7 +40,7 @@ func getData(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err, err_msg := database.GetData()
+	data, err, err_msg := database.ReadRecords()
 	if err != nil {
 		http.Error(rw, err_msg, http.StatusInternalServerError)
 		log.Println(err_msg)
