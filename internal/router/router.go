@@ -20,6 +20,7 @@ func InitAndServe() {
 	http.Handle("/", http.FileServer(http.Dir(staticPath)))
 	http.HandleFunc("/ok", getHealth)
 	http.HandleFunc("/data", getData)
+	http.HandleFunc("/test", putData) // TODO: Temporary
 
 	log.Println("Starting server...")
 	log.Panic(http.ListenAndServe(addr, nil))
@@ -50,4 +51,20 @@ func getData(rw http.ResponseWriter, r *http.Request) {
 	// Send content in json format
 	rw.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(rw).Encode(data)
+}
+
+// TODO: Temporary
+func putData(rw http.ResponseWriter, r *http.Request) {
+	err, errMsg := database.CreateRecord("testbeacon", "testname", 1, "asdf")
+
+	if err != nil {
+		http.Error(rw, errMsg, http.StatusInternalServerError)
+		log.Println(errMsg)
+		log.Println(err)
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	fmt.Fprintln(rw, "Success!")
+	log.Println("Success!")
+	return
 }
