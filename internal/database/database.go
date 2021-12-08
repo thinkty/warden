@@ -60,6 +60,37 @@ func Init() {
 	}
 }
 
+// Create a new record in the database with the given arguments. Should probably
+// validate the arguments.
+func CreateRecord(beacon string, name string, recordType int, record string) (err error, errMsg string) {
+
+	// Connect to database
+	db, err := sql.Open("sqlite3", "./sensor.db")
+	if err != nil {
+		return err, "Connection to database failed"
+	}
+	defer db.Close()
+
+	// Prepare transaction and prepare query statement
+	tx, err := db.Begin()
+	if err != nil {
+		return err, "Failed to start transaction"
+	}
+
+	stmt, err := tx.Prepare("INSERT INTO sensor(beacon, name, record_type, record) values(?, ?, ?, ?)")
+	if err != nil {
+		return err, "Failed to prepare SQL query statement"
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(beacon, name, recordType, record)
+	if err != nil {
+		return err, "Failed to execute SQL query statement"
+	}
+	tx.Commit()
+	return nil, ""
+}
+
 // Retrieve all data from the database. If error has occurred, return the error
 // along with the descriptive error message
 func ReadRecords() ([]DBRow, error, string) {
@@ -87,8 +118,11 @@ func ReadRecords() ([]DBRow, error, string) {
 		data = append(data, row)
 	}
 
-	log.Println("Row successfully scanned, printing results...")
-	fmt.Println(data)
+	log.Print("Row successfully scanned...")
+	if len(data) != 0 {
+		log.Print("Printing scan results...")
+		fmt.Println(data)
+	}
 
 	return data, nil, ""
 }
