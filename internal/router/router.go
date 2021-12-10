@@ -12,7 +12,7 @@ import (
 )
 
 const addr string = "localhost:8080"
-const staticPath string = "./web"
+const staticPath string = "./web/dist"
 
 // Initialize the router by specifying the handlers to each path and start the
 // actual server on the specified address
