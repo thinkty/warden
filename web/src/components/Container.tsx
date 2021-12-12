@@ -1,20 +1,48 @@
 import React from 'react';
-import { Item } from './Item';
+import { Item, Record } from './Item';
 
 type Props = {
+  interval: number;
+  url: string;
   itemLen: string;
 } & typeof defaultProps;
 
 const defaultProps = {
+  interval: 10000,
+  url: '/data',
   itemLen: '150px',
 };
 
 export const Container = (props: Props): JSX.Element => {
+  const [items, setItems] = React.useState<JSX.Element[]>([]);
 
-  const items: JSX.Element[] = [];
-  for (let i = 0; i < 50; i++) {
-    items.push(<Item />);
-  }
+  // Setup the fetch sequence on component mount
+  React.useEffect(() => {
+    const interval: NodeJS.Timeout = setInterval((): void => {
+      fetch(props.url)
+        .then(response => response.json())
+        .then(data => {
+          const records = Array.from<Record>(data);
+          const tempItems = records.map((record: Record) => {
+            console.log(record);
+            return (
+              <Item
+                // TODO: Handle content
+                content={record.Date + ' ' + record.Beacon + ' ' + record.Record.String}
+              />
+            );
+          });
+
+          setItems([...tempItems]);
+        })
+        .catch(err => {
+          // TODO: handle error
+          console.error(err);
+        });
+    }, props.interval);
+
+    return () => clearInterval(interval)
+  }, []);
 
   return (
     <div

@@ -1,14 +1,29 @@
 import React from 'react';
 
+type RecordContent = {
+  String: string;
+  Valid: boolean;
+}
+
+export type Record = {
+  Id: number;
+  Date: string; // TODO: Date ?
+  Beacon: string;
+  Name: string;
+  RecordType: number;
+  Record: RecordContent;
+};
+
 type Props = {
   content: string;
 } & typeof defaultProps;
 
 const defaultProps = {
-  content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sodales leo vitae nulla vehicula consequat. Ut quis nunc consectetur, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sodales leo vitae nulla vehicula consequat. Ut quis nunc consectetur,"
+  content: "N/A"
 };
 
 export const Item = (props: Props): JSX.Element => {
+  console.log(props.content)
   return (
     <div
       style={{
@@ -20,6 +35,7 @@ export const Item = (props: Props): JSX.Element => {
         overflow: 'auto',
       }}
     >
+      {/* TODO: Handle overflowing */}
       {
         props.content
       }
