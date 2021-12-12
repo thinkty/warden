@@ -1,14 +1,7 @@
 import React from 'react';
+import { Container } from './Container';
 
-type Props = {
-  message: string;
-} & typeof defaultProps;
-
-const defaultProps = {
-  message: 'Hello World!',
-};
-
-export const App = (props: Props): JSX.Element => {
+export const App = (): JSX.Element => {
   return (
     <div
       style={{
@@ -17,15 +10,15 @@ export const App = (props: Props): JSX.Element => {
         display: 'grid',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'black',
+        color: 'white',
+        fontFamily: 'Arial, Helvetica, sans-serif',
       }}
     >
-      <h1>
-        { props.message }
-      </h1>
+      <Container />
     </div>
   );
 }
-App.defaultProps = defaultProps;
 
 /*
 // Constants
