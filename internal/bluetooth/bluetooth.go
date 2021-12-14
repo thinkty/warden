@@ -1,14 +1,21 @@
+// Package for scanning, connecting, and communicating between bluetooth modules
 package bluetooth
 
 import (
 	"fmt"
 	"log"
+	"regexp"
 
 	"tinygo.org/x/bluetooth"
 )
 
+type Ward struct {
+	result bluetooth.ScanResult
+	device bluetooth.Device
+}
+
 var adapter bluetooth.Adapter
-var devices []bluetooth.ScanResult
+var wards []Ward
 
 // Initialize the bluetooth interface and scan for devices
 func Init() {
@@ -24,8 +31,7 @@ func Init() {
 	// This hangs unless an error has occurred or adapter.StopScan() has been called
 	err = adapter.Scan(handleScanResult)
 	if err != nil {
-		log.Print("Failed to scan bluetooth devices...")
-		return
+		log.Panic("Failed to scan bluetooth devices. Make sure bluetooth is enabled...")
 	}
 
 	log.Print("Stopping scan...")
@@ -45,21 +51,47 @@ func StopScan() (error, string) {
 // Add the result to the devices slice if it is unique
 func handleScanResult(adapter *bluetooth.Adapter, result bluetooth.ScanResult) {
 
-	// Iterate through the device slice and return if it is not unique
-	for _, device := range devices {
-		// If the localname or the address matches, do not add to the slice
-		if device.LocalName() == result.LocalName() || !device.Address.IsRandom() && device.Address.String() == result.Address.String() {
+	// If no local name is given, ignore
+	if result.LocalName() == "" {
+		return
+	}
+
+	// If the local name of the device does not follow the pattern, ignore
+	if match, _ := regexp.MatchString("Ward[0-9]+", result.LocalName()); !match {
+		return
+	}
+
+	// Iterate through the device slice and return if the local name is not unique
+	for _, ward := range wards {
+		if ward.result.LocalName() == result.LocalName() {
 			return
+		}
+
+		// If the scanned device has the same name but a different address, it could
+		// possibly be that the device has updated its name, replace the old one
+		if ward.result.Address.String() == result.Address.String() {
+			// TODO: disconnect the old device and connect the new device
+			// TODO: append to the slice and return
 		}
 	}
 
+	// Connect to the device
+	device, err := adapter.Connect(result.Address, bluetooth.ConnectionParams{})
+	if err != nil {
+		log.Panic("Failed to connect to bluetooth device: ", result.LocalName())
+	}
+
 	// Append to the device slice
-	devices = append(devices, result)
+	wards = append(wards, Ward{result: result, device: *device})
 
 	log.Print("Scanned new device...")
+	printDevices()
+}
+
+func printDevices() {
 	fmt.Println("[")
-	for _, device := range devices {
-		fmt.Printf("\t%s\t%s\n", device.Address, device.LocalName())
+	for _, ward := range wards {
+		fmt.Printf("\t%s\t%d\t%s\n", ward.result.Address, ward.result.RSSI, ward.result.LocalName())
 	}
 	fmt.Println("]")
 }
