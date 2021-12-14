@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/thinkty/warden/internal/bluetooth"
 	"github.com/thinkty/warden/internal/database"
 	"github.com/thinkty/warden/internal/router"
 )
@@ -32,5 +33,6 @@ type BTResponse struct {
 
 func main() {
 	database.Init()
+	go bluetooth.Init() // Running the bluetooth operations on a goroutine
 	router.InitAndServe()
 }
