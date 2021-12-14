@@ -36,6 +36,7 @@ export const Item = (props: Props): JSX.Element => {
       }}
     >
       {/* TODO: Handle overflowing */}
+      {/* TODO: Update props and display accordingly */}
       {
         props.content
       }

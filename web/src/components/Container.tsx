@@ -33,7 +33,15 @@ export const Container = (props: Props): JSX.Element => {
             );
           });
 
-          setItems([...tempItems]);
+          if (tempItems.length === 0) {
+            setItems([
+              <h1>
+                Empty...
+              </h1>
+            ]);
+          } else {
+            setItems([...tempItems]);
+          }
         })
         .catch(err => {
           // TODO: handle error
