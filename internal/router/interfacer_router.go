@@ -1,5 +1,4 @@
-// Package for handling incoming requests to the server and checking the beacons
-// at a fixed interval
+// Package for handling incoming requests to the interfacer
 package router
 
 import (
@@ -11,23 +10,23 @@ import (
 	"github.com/thinkty/warden/internal/database"
 )
 
-const addr string = "localhost:8080"
+const interfacerAddr string = "localhost:8081"
 const staticPath string = "./web/dist"
 
 // Initialize the router by specifying the handlers to each path and start the
 // actual server on the specified address
-func InitAndServe() {
+func InitAndServeServer() {
 	http.Handle("/", http.FileServer(http.Dir(staticPath)))
-	http.HandleFunc("/ok", getHealth)
+	http.HandleFunc("/ok", getInterfacerRouterHealth)
 	http.HandleFunc("/data", getData)
 	http.HandleFunc("/test", putData) // TODO: Temporary
 
 	log.Println("Starting server...")
-	log.Panic(http.ListenAndServe(addr, nil))
+	log.Panic(http.ListenAndServe(interfacerAddr, nil))
 }
 
 // Simple health check
-func getHealth(rw http.ResponseWriter, r *http.Request) {
+func getInterfacerRouterHealth(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 	fmt.Fprintln(rw, "Health Check OK!")
 	log.Println("Health Check OK!")
