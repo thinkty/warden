@@ -10,5 +10,5 @@ import (
 
 func main() {
 	database.Init()
-	router.InitAndServe()
+	router.InitAndServeInterfacer()
 }
