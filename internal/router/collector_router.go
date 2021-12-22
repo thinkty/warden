@@ -11,9 +11,9 @@ const collectorAddr string = "localhost:8082"
 
 // Initialize the router by specifying the handlers to each path and start the
 // actual server on the specified address
-func InitAndServe() {
-	http.Handle("/", http.FileServer(http.Dir(staticPath)))
+func InitAndServeCollector() {
 	http.HandleFunc("/ok", getCollectorRouterHealth)
+	http.HandleFunc("/action", handleUserAction)
 
 	log.Println("Starting server...")
 	log.Panic(http.ListenAndServe(collectorAddr, nil))
@@ -25,4 +25,14 @@ func getCollectorRouterHealth(rw http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(rw, "Health Check OK!")
 	log.Println("Health Check OK!")
 	return
+}
+
+// Check the user action and handle it
+func handleUserAction(rw http.ResponseWriter, r *http.Request) {
+	// TODO: the data structure used for passing user action is not clear yet
+
+	// temporary code
+	rw.WriteHeader(http.StatusOK)
+	fmt.Fprintln(rw, "OK!")
+	log.Println("Handle user action")
 }
