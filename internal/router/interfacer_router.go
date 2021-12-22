@@ -15,7 +15,7 @@ const staticPath string = "./web/dist"
 
 // Initialize the router by specifying the handlers to each path and start the
 // actual server on the specified address
-func InitAndServeServer() {
+func InitAndServeInterfacer() {
 	http.Handle("/", http.FileServer(http.Dir(staticPath)))
 	http.HandleFunc("/ok", getInterfacerRouterHealth)
 	http.HandleFunc("/data", getData)
