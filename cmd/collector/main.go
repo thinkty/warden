@@ -3,13 +3,12 @@
 package main
 
 import (
-	"github.com/thinkty/warden/internal/bluetooth"
 	"github.com/thinkty/warden/internal/database"
 )
 
 func main() {
 	database.Init()
-	bluetooth.Init()
 
 	// TODO: handle data creation, and add router to handle user action
+	// router.InitAndServeCollector()
 }
