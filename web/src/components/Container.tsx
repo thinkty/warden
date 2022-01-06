@@ -18,35 +18,40 @@ export const Container = (props: Props): JSX.Element => {
 
   // Setup the fetch sequence on component mount
   React.useEffect(() => {
-    const interval: NodeJS.Timeout = setInterval((): void => {
+    const fetchRecords = (): void => {
       fetch(props.url)
-        .then(response => response.json())
-        .then(data => {
-          const records = Array.from<Record>(data);
-          const tempItems = records.map((record: Record) => {
-            console.log(record);
-            return (
-              <Item
-                // TODO: Handle content
-                content={record.Date + ' ' + record.Beacon + ' ' + record.Record.String}
-              />
-            );
-          });
-
-          if (tempItems.length === 0) {
-            setItems([
-              <h1>
-                Empty...
-              </h1>
-            ]);
-          } else {
-            setItems([...tempItems]);
-          }
-        })
-        .catch(err => {
-          // TODO: handle error
-          console.error(err);
+      .then(response => response.json())
+      .then(data => {
+        const records = Array.from<Record>(data);
+        const tempItems = records.map((record: Record) => {
+          console.log(record);
+          return (
+            <Item
+              // TODO: Handle content
+              content={record.Date + ' ' + record.Beacon + ' ' + record.Record.String}
+            />
+          );
         });
+
+        if (tempItems.length === 0) {
+          setItems([
+            <h1>
+              Empty...
+            </h1>
+          ]);
+        } else {
+          setItems([...tempItems]);
+        }
+      })
+      .catch(err => {
+        // TODO: handle error
+        console.error(err);
+      });
+    }
+
+    fetchRecords();
+    const interval: NodeJS.Timeout = setInterval((): void => {
+      fetchRecords();
     }, props.interval);
 
     return () => clearInterval(interval)

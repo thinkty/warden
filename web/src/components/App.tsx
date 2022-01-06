@@ -15,7 +15,7 @@ export const App = (): JSX.Element => {
         fontFamily: 'Arial, Helvetica, sans-serif',
       }}
     >
-      <Container />
+      <Container url="/data-test" />
     </div>
   );
 }

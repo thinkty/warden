@@ -23,7 +23,6 @@ const defaultProps = {
 };
 
 export const Item = (props: Props): JSX.Element => {
-  console.log(props.content)
   return (
     <div
       style={{
