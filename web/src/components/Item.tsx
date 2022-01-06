@@ -15,14 +15,13 @@ export type Record = {
 };
 
 type Props = {
-  content: string;
+  record: Record;
 } & typeof defaultProps;
 
-const defaultProps = {
-  content: "N/A"
-};
+const defaultProps = {};
 
-export const Item = (props: Props): JSX.Element => {
+export const Item = ({ record }: Props): JSX.Element => {
+
   return (
     <div
       style={{
@@ -37,7 +36,7 @@ export const Item = (props: Props): JSX.Element => {
       {/* TODO: Handle overflowing */}
       {/* TODO: Update props and display accordingly */}
       {
-        props.content
+        record.Record.String
       }
     </div>
   );

@@ -23,15 +23,7 @@ export const Container = (props: Props): JSX.Element => {
       .then(response => response.json())
       .then(data => {
         const records = Array.from<Record>(data);
-        const tempItems = records.map((record: Record) => {
-          console.log(record);
-          return (
-            <Item
-              // TODO: Handle content
-              content={record.Date + ' ' + record.Beacon + ' ' + record.Record.String}
-            />
-          );
-        });
+        const tempItems = records.map((record: Record) => <Item record={record}/>);
 
         if (tempItems.length === 0) {
           setItems([
