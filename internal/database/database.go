@@ -65,7 +65,7 @@ func Init() {
 func CreateRecord(beacon string, name string, recordType int, record string) (err error, errMsg string) {
 
 	// Connect to database
-	db, err := sql.Open("sqlite3", "./sensor.db")
+	db, err := sql.Open("sqlite3", "./sample.db")
 	if err != nil {
 		return err, "Connection to database failed"
 	}
@@ -91,12 +91,19 @@ func CreateRecord(beacon string, name string, recordType int, record string) (er
 	return nil, ""
 }
 
-// Retrieve all data from the database. If error has occurred, return the error
-// along with the descriptive error message
-func ReadRecords() ([]DBRow, error, string) {
+// Retrieve all data from the database. If isTesting is true, get records from
+// sample database instead of the real one. If error has occurred, return the
+// error along with the descriptive error message
+func ReadRecords(isTest bool) ([]DBRow, error, string) {
+	var path string
+	if isTest {
+		path = "./sample.db"
+	} else {
+		path = "./sensor.db"
+	}
 
 	// Connect to database
-	db, err := sql.Open("sqlite3", "./sensor.db")
+	db, err := sql.Open("sqlite3", path)
 	if err != nil {
 		return nil, err, "Connection to database failed"
 	}

@@ -15,4 +15,4 @@
 # vendor/
 
 # Database files
-*.db
+sensor.db

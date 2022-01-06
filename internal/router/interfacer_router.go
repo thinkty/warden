@@ -19,9 +19,10 @@ func InitAndServeInterfacer() {
 	http.Handle("/", http.FileServer(http.Dir(staticPath)))
 	http.HandleFunc("/ok", getInterfacerRouterHealth)
 	http.HandleFunc("/data", getData)
+	http.HandleFunc("/data-test", getSampleData)
 	http.HandleFunc("/test", putData) // TODO: Temporary
 
-	log.Println("Starting server...")
+	log.Printf("Starting server at %s ...", interfacerAddr)
 	log.Panic(http.ListenAndServe(interfacerAddr, nil))
 }
 
@@ -40,7 +41,21 @@ func getData(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err, errMsg := database.ReadRecords()
+	data, err, errMsg := database.ReadRecords(false)
+	if err != nil {
+		http.Error(rw, errMsg, http.StatusInternalServerError)
+		log.Println(errMsg)
+		log.Println(err)
+	}
+
+	// Send content in json format
+	rw.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(rw).Encode(data)
+}
+
+// Fetch all data from the sample database
+func getSampleData(rw http.ResponseWriter, r *http.Request) {
+	data, err, errMsg := database.ReadRecords(true)
 	if err != nil {
 		http.Error(rw, errMsg, http.StatusInternalServerError)
 		log.Println(errMsg)
@@ -60,6 +75,7 @@ func putData(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, errMsg, http.StatusInternalServerError)
 		log.Println(errMsg)
 		log.Println(err)
+		return
 	}
 
 	rw.WriteHeader(http.StatusOK)
