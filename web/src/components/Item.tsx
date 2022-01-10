@@ -24,20 +24,58 @@ export const Item = ({ record }: Props): JSX.Element => {
 
   return (
     <div
+      onClick={() => { console.log(record) }}
       style={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         border: 'thin solid white',
         overflow: 'auto',
+        cursor: 'pointer',
       }}
     >
       {/* TODO: Handle overflowing */}
       {/* TODO: Update props and display accordingly */}
-      {
-        record.Record.String
-      }
+      {/* Item Header */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div
+          style={{
+            fontSize: 20,
+          }}
+        >
+          { record.Name }
+        </div>
+        <div
+          style={{
+            fontSize: 13,
+          }}
+        >
+          { record.Beacon }
+        </div>
+      </div>
+      {/* Item Content */}
+      <div
+        style={{
+          fontSize: 44,
+          fontWeight: 'bold',
+        }}
+      >
+        { record.Record.String }
+      </div>
+      {/* Item Footer */}
+      <div
+        style={{
+
+        }}
+      />
     </div>
   );
 }
