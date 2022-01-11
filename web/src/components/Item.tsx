@@ -5,9 +5,9 @@ type RecordContent = {
   Valid: boolean;
 }
 
-export type Record = {
+export type SensorRecord = {
   Id: number;
-  Date: string; // TODO: Date ?
+  Date: Date;
   Beacon: string;
   Name: string;
   RecordType: number;
@@ -15,16 +15,16 @@ export type Record = {
 };
 
 type Props = {
-  record: Record;
+  records: SensorRecord[];
 } & typeof defaultProps;
 
 const defaultProps = {};
 
-export const Item = ({ record }: Props): JSX.Element => {
+export const Item = ({ records }: Props): JSX.Element => {
 
   return (
     <div
-      onClick={() => { console.log(record) }}
+      onClick={() => { console.log(records) }}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -51,14 +51,14 @@ export const Item = ({ record }: Props): JSX.Element => {
             fontSize: 20,
           }}
         >
-          { record.Name }
+          { records[0].Name }
         </div>
         <div
           style={{
             fontSize: 13,
           }}
         >
-          { record.Beacon }
+          { records[0].Beacon }
         </div>
       </div>
       {/* Item Content */}
@@ -68,7 +68,7 @@ export const Item = ({ record }: Props): JSX.Element => {
           fontWeight: 'bold',
         }}
       >
-        { record.Record.String }
+        { records[0].Record.String }
       </div>
       {/* Item Footer */}
       <div

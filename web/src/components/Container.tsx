@@ -1,5 +1,5 @@
 import React from 'react';
-import { Item, Record } from './Item';
+import { Item, SensorRecord } from './Item';
 
 type Props = {
   interval: number;
@@ -16,14 +16,40 @@ const defaultProps = {
 export const Container = (props: Props): JSX.Element => {
   const [items, setItems] = React.useState<JSX.Element[]>([]);
 
-  // Setup the fetch sequence on component mount
+  // Setting up fetching records. Currently, the implementation is very crude
+  // and it is just fetching all the records everytime which is very inefficient.
+  // However, the optimization of fetching will come in the later versions.
+  // Check the project board on Github on how to improve the fetch sequence.
   React.useEffect(() => {
     const fetchRecords = (): void => {
       fetch(props.url)
       .then(response => response.json())
       .then(data => {
-        const records = Array.from<Record>(data);
-        const tempItems = records.map((record: Record) => <Item record={record}/>);
+        const records = Array.from<SensorRecord>(data);
+
+        // Organize the records into groups by beacon and name
+        const recordGroups = new Map<string, SensorRecord[]>();
+        for (let i = 0; i < records.length; i++) {
+          const record: SensorRecord = records[i];
+          const key: string = record.Beacon + "/" + record.Name;
+
+          // If the group already exists, update map. If not, create new entry
+          if (recordGroups.has(key)) {
+            const group = recordGroups.get(key);
+            if (group) {
+              group.push(record)
+            } else {
+              recordGroups.set(key, [record]);
+            }
+          } else {
+            recordGroups.set(key, [record]);
+          }
+        }
+
+        const tempItems: JSX.Element[] = [];
+        for (const [_, group] of recordGroups.entries()) {
+          tempItems.push(<Item records={group} />);
+        }
 
         if (tempItems.length === 0) {
           setItems([
@@ -42,6 +68,8 @@ export const Container = (props: Props): JSX.Element => {
     }
 
     fetchRecords();
+
+    // Setup the fetch interval on component mount
     const interval: NodeJS.Timeout = setInterval((): void => {
       fetchRecords();
     }, props.interval);
@@ -63,9 +91,7 @@ export const Container = (props: Props): JSX.Element => {
         justifyContent: 'center',
       }}
     >
-      {
-        items
-      }
+      { items }
     </div>
   );
 }
