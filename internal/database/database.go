@@ -15,17 +15,17 @@ import (
 // exported so that it can be json encoded. Record can be empty (null) so it
 // uses the sql type NullString.
 type DBRow struct {
-	Id         int
-	Date       string
-	Beacon     string
-	Name       string
-	RecordType int
-	Record     sql.NullString
+	Id          int
+	Date        string
+	Beacon      string
+	Name        string
+	Record      sql.NullString
+	UserActions sql.NullString
 }
 
 // Parse DBItem into string format for logging purpose
 func (item DBRow) String() string {
-	return fmt.Sprintf("\n\tID:\t%d\n\tDate:\t%s\n\tBeacon:\t%s\n\tName:\t%s\n\tRecord-Type:\t%d\n\tRecord:%s\n", item.Id, item.Date, item.Beacon, item.Name, item.RecordType, item.Record.String)
+	return fmt.Sprintf("\n\tID:\t%d\n\tDate:\t%s\n\tBeacon:\t%s\n\tName:\t%s\n\tRecord:\t%s\n\tUserActions:\t%s\n", item.Id, item.Date, item.Beacon, item.Name, item.Record.String, item.UserActions.String)
 }
 
 // Initialize the database by creating the sql file if it does not already exist
@@ -52,8 +52,8 @@ func Init() {
 		date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		beacon TEXT NOT NULL,
 		name TEXT NOT NULL,
-		record_type INTEGER NOT NULL,
-		record BLOB
+		record BLOB,
+		userActions BLOB
 	)`
 	if _, err = db.Exec(query); err != nil {
 		log.Panicf("%q: %s\n", err, query)
@@ -62,10 +62,10 @@ func Init() {
 
 // Create a new record in the database with the given arguments. Should probably
 // validate the arguments.
-func CreateRecord(beacon string, name string, recordType int, record string) (err error, errMsg string) {
+func CreateRecord(beacon string, name string, record string, userActions string) (err error, errMsg string) {
 
 	// Connect to database
-	db, err := sql.Open("sqlite3", "./sample.db")
+	db, err := sql.Open("sqlite3", "./sample.db") // TODO: for testing
 	if err != nil {
 		return err, "Connection to database failed"
 	}
@@ -77,13 +77,13 @@ func CreateRecord(beacon string, name string, recordType int, record string) (er
 		return err, "Failed to start transaction"
 	}
 
-	stmt, err := tx.Prepare("INSERT INTO sensor(beacon, name, record_type, record) values(?, ?, ?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO sensor(beacon, name, record, userActions) values(?, ?, ?, ?)")
 	if err != nil {
 		return err, "Failed to prepare SQL query statement"
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(beacon, name, recordType, record)
+	_, err = stmt.Exec(beacon, name, record, userActions)
 	if err != nil {
 		return err, "Failed to execute SQL query statement"
 	}
@@ -94,9 +94,9 @@ func CreateRecord(beacon string, name string, recordType int, record string) (er
 // Retrieve all data from the database. If isTesting is true, get records from
 // sample database instead of the real one. If error has occurred, return the
 // error along with the descriptive error message
-func ReadRecords(isTest bool) ([]DBRow, error, string) {
+func ReadRecords(useSampleDB bool) ([]DBRow, error, string) {
 	var path string
-	if isTest {
+	if useSampleDB {
 		path = "./sample.db"
 	} else {
 		path = "./sensor.db"
@@ -119,7 +119,7 @@ func ReadRecords(isTest bool) ([]DBRow, error, string) {
 	data := make([]DBRow, 0)
 	for rows.Next() {
 		var row DBRow
-		if err := rows.Scan(&row.Id, &row.Date, &row.Beacon, &row.Name, &row.RecordType, &row.Record); err != nil {
+		if err := rows.Scan(&row.Id, &row.Date, &row.Beacon, &row.Name, &row.Record, &row.UserActions); err != nil {
 			return nil, err, "Row scan failed"
 		}
 		data = append(data, row)

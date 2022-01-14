@@ -19,8 +19,8 @@ func InitAndServeInterfacer() {
 	http.Handle("/", http.FileServer(http.Dir(staticPath)))
 	http.HandleFunc("/ok", getInterfacerRouterHealth)
 	http.HandleFunc("/data", getData)
-	http.HandleFunc("/data-test", getSampleData)
-	http.HandleFunc("/test", putData) // TODO: Temporary
+	http.HandleFunc("/data-test", getSampleData) // TODO: Temporary
+	http.HandleFunc("/test", putData)            // TODO: Temporary
 
 	log.Printf("Starting server at %s ...", interfacerAddr)
 	log.Panic(http.ListenAndServe(interfacerAddr, nil))
@@ -69,7 +69,7 @@ func getSampleData(rw http.ResponseWriter, r *http.Request) {
 
 // TODO: Temporary
 func putData(rw http.ResponseWriter, r *http.Request) {
-	err, errMsg := database.CreateRecord("testbeacon", "testname", 1, "asdf")
+	err, errMsg := database.CreateRecord("testbeacon", "testname", "On", "Off:0,On:1")
 
 	if err != nil {
 		http.Error(rw, errMsg, http.StatusInternalServerError)
