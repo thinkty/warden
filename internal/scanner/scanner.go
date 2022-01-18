@@ -19,7 +19,7 @@ type Device struct {
 }
 
 type Devices struct {
-	list []Device
+	List []Device
 	// TODO: add other properties necessary
 }
 
@@ -27,13 +27,13 @@ type Devices struct {
 func (devices *Devices) Add(ip net.IP) {
 	// TODO: validate that it is a local IP address
 
-	devices.list = append(devices.list, Device{IP: ip, Valid: true})
+	devices.List = append(devices.List, Device{IP: ip, Valid: true})
 	log.Printf("Added %s to device list", ip.String())
 }
 
 // Remove the address from the list if it exists and is valid
 func (devices *Devices) Remove(ip net.IP) {
-	length := len(devices.list)
+	length := len(devices.List)
 
 	if length == 0 {
 		log.Printf("Cannot remove %s from device list. Length 0", ip.String())
@@ -41,9 +41,9 @@ func (devices *Devices) Remove(ip net.IP) {
 	}
 
 	// Since the list slice won't be big, just traverse and search
-	for index, device := range devices.list {
+	for index, device := range devices.List {
 		if device.Valid && reflect.DeepEqual(device.IP, ip) {
-			devices.list[index].Valid = false
+			devices.List[index].Valid = false
 			log.Printf("Removed %s from device list", ip.String())
 			return
 		}

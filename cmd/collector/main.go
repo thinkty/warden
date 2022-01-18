@@ -4,11 +4,19 @@ package main
 
 import (
 	"github.com/thinkty/warden/internal/database"
+	"github.com/thinkty/warden/internal/scanner"
 )
 
 func main() {
 	database.Init()
 
-	// TODO: handle data creation, and add router to handle user action
+	// Add the available modules to the device list
+	devices := scanner.Devices{
+		List: make([]scanner.Device, 0),
+	}
+	devices.Scan()
+
+	// TODO: setup go routine to query the devices at an interval
+
 	// router.InitAndServeCollector()
 }
