@@ -67,6 +67,8 @@ func (devices *Devices) Scan() {
 	}
 	defer conn.Close()
 
+	log.Printf("Scanner listening at %s", listenAddr.String())
+
 	broadcastAddr, err := net.ResolveUDPAddr("udp4", BroadcastAddr)
 	if err != nil {
 		log.Panic(err)
@@ -79,6 +81,9 @@ func (devices *Devices) Scan() {
 		log.Panic(err)
 	}
 
+	log.Printf("Dialing to %s", broadcastAddr.String())
+
+	// TODO: is this correct? what if there are multiple responses?
 	// Read server response
 	buf := make([]byte, 1000)
 	n, resAddr, err := conn.ReadFromUDP(buf)
