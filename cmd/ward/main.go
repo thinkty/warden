@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-const WardAddr = "127.0.0.1:48637"
+const WardAddr = ":48637"
 
 func main() {
 	conn, err := net.ListenPacket("udp4", WardAddr)

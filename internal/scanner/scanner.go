@@ -7,9 +7,8 @@ import (
 	"reflect"
 )
 
-// Port to send the UDP broadcast to
-const ScannerPort = ":48636"
-const BroadcastAddr = "192.168.255.255:48637"
+const ScannerPort = ":48636"                  // Port to send the UDP broadcast from
+const BroadcastAddr = "192.168.219.255:48637" // Host and port to send the broadcast to
 
 // Struct to store IP address and valid bit. If valid bit is set to false, it
 // should not be used to request sensor values
